@@ -1,8 +1,9 @@
 import{mkdirSync,readdirSync,readFileSync,writeFileSync}from'node:fs';import{join}from'node:path';
+const ops=new Set([0,1,2,3,4,5,6,7,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,32,33,34,48,49,50,51,52,64,65,80,81,82,83]);
 function run(p,i){let d=new Int32Array(256),s=0,c=new Int32Array(64),q=0,m=new Int32Array(256),o=new Uint8Array(65536),z=0,x=0,pc=0,n=0,e=0;
  let end=a=>[o.subarray(0,z),a],pop=k=>{if(s<k){e=2;return 1}},push=k=>{if(s+k>256){e=3;return 1}};
  for(;;){if(n==1e6)return end(10);if(pc<0||pc>=p.length)return end(9);let a=p[pc],l=a==1?1:a==2?4:a>=48&&a<=51?2:0;
-  if(!([0,1,2,3,4,5,6,7,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,32,33,34,48,49,50,51,52,64,65,80,81,82,83].includes(a)))return end(5);
+  if(!ops.has(a))return end(5);
   if(pc+l>=p.length)return end(9);n++;let t=pc+1+l;pc=t;
   if(a==0)return end(0);
   if(a==1){if(push(1))return end(e);d[s++]=(p[t-1]<<24)>>24;continue}
@@ -24,6 +25,6 @@ function run(p,i){let d=new Int32Array(256),s=0,c=new Int32Array(64),q=0,m=new I
   if(a==80){if(pop(1))return end(e);let b=Buffer.from(String(d[s-1]));if(z+b.length>65536)return end(11);s--;o.set(b,z);z+=b.length;continue}
   if(a==81){if(pop(1))return end(e);if(z==65536)return end(11);o[z++]=d[--s]&255;continue}
   if(a==82){if(push(1))return end(e);d[s++]=x<i.length?i[x++]:-1;continue}
-  if(pop(1))return end(e);return end(d[--s]&255)
+  if(a==83){if(pop(1))return end(e);return end(d[--s]&255)}
  }}
 let I=process.env.MAKEFUN_INPUT_DIR??'/input',O=process.env.MAKEFUN_OUTPUT_DIR??'/output';for(let id of readdirSync(I).sort()){let b=join(I,id),r=run(readFileSync(join(b,'program.bin')),readFileSync(join(b,'input.bin'))),w=join(O,id);mkdirSync(w,{recursive:true});writeFileSync(join(w,'stdout.bin'),r[0]);writeFileSync(join(w,'exit.txt'),r[1]+'\n')}
